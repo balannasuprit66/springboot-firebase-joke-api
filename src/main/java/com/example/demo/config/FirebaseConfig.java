@@ -8,7 +8,9 @@ import jakarta.annotation.PostConstruct;
 
 import org.springframework.context.annotation.Configuration;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Base64;
 
 @Configuration
 public class FirebaseConfig {
@@ -18,29 +20,35 @@ public class FirebaseConfig {
 
         try {
 
+            String firebaseKey =
+                    System.getenv("firebase-key.json");
+
+            byte[] decoded =
+                    Base64.getDecoder()
+                            .decode(firebaseKey);
+
             InputStream serviceAccount =
-                    getClass()
-                            .getClassLoader()
-                            .getResourceAsStream("firebase-key.json");
+                    new ByteArrayInputStream(decoded);
 
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(
-                            GoogleCredentials.fromStream(serviceAccount)
-                    )
-
-                    // IMPORTANT
-                    .setDatabaseUrl(
-                            "https://demmo-172a7-default-rtdb.firebaseio.com/"
-                    )
-
-                    .build();
+            FirebaseOptions options =
+                    FirebaseOptions.builder()
+                            .setCredentials(
+                                    GoogleCredentials
+                                            .fromStream(serviceAccount)
+                            )
+                            .setDatabaseUrl(
+                                    "https://demmo-172a7-default-rtdb.firebaseio.com/"
+                            )
+                            .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
 
                 FirebaseApp.initializeApp(options);
-            }
 
-            System.out.println("Firebase Initialized");
+                System.out.println(
+                        "Firebase Initialized Successfully"
+                );
+            }
 
         } catch (Exception e) {
 
