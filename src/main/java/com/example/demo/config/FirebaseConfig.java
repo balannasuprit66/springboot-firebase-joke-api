@@ -21,7 +21,7 @@ public class FirebaseConfig {
         try {
 
             String firebaseKey =
-                    System.getenv("firebase-key.json");
+                    System.getenv("FIREBASE_KEY");
 
             byte[] decoded =
                     Base64.getDecoder()
